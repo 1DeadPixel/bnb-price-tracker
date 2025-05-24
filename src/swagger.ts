@@ -13,7 +13,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `${process.env.FRONTEND_URL || 'http://localhost'}:${process.env.PORT || 3001}/api`, // Adjust for prod if needed
+        url: `${process.env.FRONTEND_URL || 'http://localhost'}:${process.env.PORT || 3002}/api`, // Adjust for prod if needed
       },
     ],
   },

@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const bnbRouter = Router();
+bnbRouter.use(apiRateLimiter);
 
 let cachedAt = 0;
 const CACHE_DURATION_MS = 5000;
@@ -37,7 +38,7 @@ let priceService = new BNBPriceService(process.env.BNB_RPC_URL || "");
  *                   type: boolean
  *                   example: true
  */
-bnbRouter.get('/bnb-price', apiRateLimiter, async (req: Request, res: Response) => {
+bnbRouter.get('/bnb-price', async (req: Request, res: Response) => {
   try {
     const now = Date.now();
 

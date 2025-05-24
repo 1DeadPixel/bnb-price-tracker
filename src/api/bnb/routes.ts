@@ -35,7 +35,7 @@ let priceService = new BNBPriceService(process.env.BNB_RPC_URL || "");
  *                   type: boolean
  *                   example: true
  */
-bnbRouter.get('/bnb-price', async (req: Request, res: Response) => {
+bnbRouter.get('/', async (req: Request, res: Response) => {
   try {
     const now = Date.now();
 

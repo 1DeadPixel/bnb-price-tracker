@@ -1,6 +1,8 @@
+import { apiRateLimiter } from '../utils';
 import { Router, Request, Response } from 'express';
 import { PriceData } from '../../modules/interfaces/PriceData';
 import { BNBPriceService } from '../../modules/bnb/PriceService';
+
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -35,7 +37,7 @@ let priceService = new BNBPriceService(process.env.BNB_RPC_URL || "");
  *                   type: boolean
  *                   example: true
  */
-bnbRouter.get('/', async (req: Request, res: Response) => {
+bnbRouter.get('/bnb-price', apiRateLimiter, async (req: Request, res: Response) => {
   try {
     const now = Date.now();
 

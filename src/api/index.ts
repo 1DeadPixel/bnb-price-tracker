@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import bnbRouter from './bnb/routes';
 import { swaggerSpec } from '../swagger';
 import swaggerUi from 'swagger-ui-express';
-import express, { Request, Response, NextFunction, RequestHandler } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 
 
 
@@ -12,41 +12,30 @@ dotenv.config();
 
 export const app = express();
 
-const corsValidator: RequestHandler = (req, res, next) => {
-    const allowedOrigin = process.env.WHITELISTED_ORIGIN;
-    const requestOrigin = req.headers.origin;
+const corsOptions: cors.CorsOptions = {
+    origin: (origin, callback) => {
+      const allowedOrigin = process.env.WHITELISTED_ORIGIN;
   
-    if (req.method === 'OPTIONS') {
-      if (allowedOrigin && requestOrigin === allowedOrigin) {
-        return next();
-      }
-      res.status(403).json({ error: 'CORS: Origin not allowed (preflight)' });
-      return;
-    }
+      if (!allowedOrigin) return callback(null, true);
+      if (!origin) return callback(new Error('CORS: Origin header required'), false);
+      if (origin === allowedOrigin) return callback(null, true);
   
-    if (allowedOrigin) {
-      if (!requestOrigin) {
-        res.status(403).json({ error: 'CORS: Origin header is required' });
-        return;
-      }
-      if (requestOrigin !== allowedOrigin) {
-        res.status(403).json({ error: 'CORS: Origin not allowed' });
-        return;
-      }
-    }
-  
-    next();
+      return callback(new Error('CORS: Origin not allowed'), false);
+    },
+    optionsSuccessStatus: 204
   };
   
-  app.use(corsValidator);
-  
-  
-  
-  app.use(cors({
-    origin: allowedOrigin => allowedOrigin || '*',
-    optionsSuccessStatus: 200,
-  }));
+  app.use(cors(corsOptions));
+
 
 app.use('/api', bnbRouter);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err.message?.startsWith('CORS')) {
+      res.status(403).json({ error: err.message });
+      return;
+    }
+    next(err);
+  });

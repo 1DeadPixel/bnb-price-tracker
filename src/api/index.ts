@@ -15,19 +15,18 @@ export const app = express();
 app.use(cors({
     origin: (origin, callback) => {
       const allowedOrigin = process.env.WHITELISTED_ORIGIN;
-  
+
+      // If env var is not set → allow all origins
+      if (!allowedOrigin) {
+        return callback(null, true);
+      }
       // No origin header (e.g., curl, Postman)
       if (!origin) {
-        return callback(null, true);
+        return callback(null, false);
       }
   
       // If env var is set → enforce it
       if (allowedOrigin && origin === allowedOrigin) {
-        return callback(null, true);
-      }
-  
-      // If env var is not set → allow all origins
-      if (!allowedOrigin) {
         return callback(null, true);
       }
   

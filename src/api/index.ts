@@ -15,25 +15,23 @@ export const app = express();
 app.use(cors({
     origin: (origin, callback) => {
       const allowedOrigin = process.env.WHITELISTED_ORIGIN;
+  
+      if (allowedOrigin) {
+        if (!origin) {
+          return callback(new Error('CORS: Origin header is required'), false);
+        }
+  
+        if (origin === allowedOrigin) {
+          return callback(null, true); // ✅ allowed
+        }
 
-      // If env var is not set → allow all origins
-      if (!allowedOrigin) {
-        return callback(null, true);
-      }
-      // No origin header (e.g., curl, Postman)
-      if (!origin) {
-        return callback(null, false);
+        return callback(new Error('CORS: Origin not allowed'), false);
       }
   
-      // If env var is set → enforce it
-      if (allowedOrigin && origin === allowedOrigin) {
-        return callback(null, true);
-      }
-  
-      return callback(new Error('Not allowed by CORS'));
-    }
+      return callback(null, true);
+    },
+    optionsSuccessStatus: 200
   }));
-
 
 app.use('/api', bnbRouter);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

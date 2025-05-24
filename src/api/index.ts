@@ -12,13 +12,20 @@ dotenv.config();
 
 export const app = express();
 
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction): void => {
     const allowedOrigin = process.env.WHITELISTED_ORIGIN;
     const requestOrigin = req.headers.origin;
   
-    if (allowedOrigin && requestOrigin !== allowedOrigin) {
-      res.status(403).json({ error: 'Origin not allowed by server policy.' });
-      return;
+    if (allowedOrigin) {
+      if (!requestOrigin) {
+        res.status(403).json({ error: 'CORS: Origin header is required' });
+        return;
+      }
+  
+      if (requestOrigin !== allowedOrigin) {
+        res.status(403).json({ error: 'CORS: Origin not allowed' });
+        return;
+      }
     }
   
     next();

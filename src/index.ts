@@ -1,6 +1,6 @@
 import { app } from './api/index';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 try {
     app.listen(PORT, () => {

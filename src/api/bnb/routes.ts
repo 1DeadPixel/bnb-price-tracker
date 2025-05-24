@@ -47,8 +47,12 @@ bnbRouter.get('/bnb-price', apiRateLimiter, async (req: Request, res: Response) 
       // Simulate a price change between -2 and 2 %
       const simulatedPrice = BNBPriceService.simulate(priceData.price, 0.02);
 
-      cachedPriceData = priceData;
-      cachedPriceData.up = simulatedPrice > cachedPriceData.price;
+      cachedPriceData = {
+        price: priceData.price,
+        lastUpdated: priceData.lastUpdated,
+        up: simulatedPrice > priceData.price,
+      };
+      
     }
     res.json(cachedPriceData);
   } catch (err) {

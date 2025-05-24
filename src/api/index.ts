@@ -21,7 +21,7 @@ const limiter = rateLimit({
   windowMs: 60 * 1000, 
   max: 6,              
 });
-app.use('/api', limiter);
+app.use('/api/bnb-price', limiter);
 
 app.use('/api', bnbRouter);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
